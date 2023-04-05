@@ -1,0 +1,12 @@
+Name, Activity Level, Injury, Favorite Campus Location, Concentration	Outcome
+Student 1, very high, FALSE, omac, economics, TRUE
+Student 2, high, FALSE, omac, sociology, TRUE
+Student 3, high, FALSE,	omac, engineering, FALSE
+Student 4, high, FALSE, john hay, computer science, TRUE
+Student 5, low, TRUE, nelson, engineering, TRUE
+Student 6, low, TRUE, careerlab, sociology, TRUE
+Student 7, low, FALSE, sciences library, history, FALSE
+Student 8, low, TRUE, new york, public policy, TRUE
+Student 9, medium, FALSE, blue room, economics, FALSE
+Student 10, medium, FALSE, ripta, sociology, FALSE
+Student 11, medium, TRUE, nelson, economics, FALSE

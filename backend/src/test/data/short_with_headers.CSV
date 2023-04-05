@@ -1,0 +1,7 @@
+Name, Concentration, Experience, Connection w/ Current Member, Outcome
+Student 1, CS, strong, FALSE, reject
+Student 2, Econ, strong, TRUE, accept
+Student 3, CS, strong, TRUE, accept
+Student 4, Econ, weak, TRUE, accept
+Student 5, Sociology, strong, FALSE, reject
+Student 6, Econ, summer, FALSE, accept
