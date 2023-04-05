@@ -21,7 +21,6 @@ public final class Server {
     });
 
     Spark.get("/loadGeoJson", new LoadGeoJsonHandler(redliningData));
-    Spark.get("/viewGeoJson", new ViewGeoJsonHandler(redliningData));
     Spark.get("/filterWithinBounds", new FilterWithinBoundsHandler(redliningData));
     Spark.get("/searchByDescription", new SearchByDescriptionHandler(redliningData));
     Spark.init();

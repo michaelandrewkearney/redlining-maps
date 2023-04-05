@@ -5,7 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public record FeatureCollection(List<Feature> features) {
+public record FeatureCollection(String type, List<Feature> features) {
+  public FeatureCollection(List<Feature> features) {
+    this("FeatureCollection", features);
+  }
   public FeatureCollection copy() {
     List<Feature> featuresCopy = this.features.stream()
         .map(Feature::copy)
@@ -59,7 +62,10 @@ public record FeatureCollection(List<Feature> features) {
     return new FeatureCollection(containedFeatures);
   }
 
-  public record Feature(MultiPolygon geometry, RedliningFeatureProperties properties) {
+  public record Feature(String type, MultiPolygon geometry, RedliningFeatureProperties properties) {
+    public Feature(MultiPolygon geometry, RedliningFeatureProperties properties) {
+      this("Feature", geometry, properties);
+    }
     public Feature copy() {
       if (geometry == null) {
         return new Feature(null, this.properties.copy());
@@ -89,7 +95,10 @@ public record FeatureCollection(List<Feature> features) {
       return this.geometry.points();
     }
 
-    public record MultiPolygon(List<List<List<List<Double>>>> coordinates) {
+    public record MultiPolygon(String type, List<List<List<List<Double>>>> coordinates) {
+      public MultiPolygon(List<List<List<List<Double>>>> coordinates) {
+        this("MultiPolygon", coordinates);
+      }
 
       /**
        * Returns an unmodifiable List containing the elements within coordinates
@@ -120,7 +129,7 @@ public record FeatureCollection(List<Feature> features) {
     /**
      * TODO: add javadoc
      */
-    public record RedliningFeatureProperties(String state, String city, String name, Map<String, String> area_description_data) {
+    public record RedliningFeatureProperties(String state, String city, String name, String holc_grade, Map<String, String> area_description_data) {
 
       /**
        * Returns a deep copy of the `RedliningFeatureProperties` object
@@ -128,7 +137,7 @@ public record FeatureCollection(List<Feature> features) {
        * @return a `RedliningFeatureProperties` object
        */
       public RedliningFeatureProperties copy() {
-        return new RedliningFeatureProperties(this.state, this.city, this.name, this.area_description_data);
+        return new RedliningFeatureProperties(this.state, this.city, this.name, this.holc_grade, Map.copyOf(this.area_description_data));
       }
 
       /**

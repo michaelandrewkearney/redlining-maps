@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.squareup.moshi.JsonReader;
 import edu.brown.cs32.ezhang29mma32.server.LoadGeoJsonHandler;
 import edu.brown.cs32.ezhang29mma32.server.RedliningData;
-import edu.brown.cs32.ezhang29mma32.server.ViewGeoJsonHandler;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -38,7 +37,6 @@ public class TestViewGeoJsonHandler {
 
     // In fact, restart the entire Spark server for every test!
     Spark.get("/loadGeoJson", new LoadGeoJsonHandler(loadedGeoData));
-    Spark.get("/viewGeoJson", new ViewGeoJsonHandler(loadedGeoData));
 
     Spark.init();
     Spark.awaitInitialization(); // don't continue until the server is listening

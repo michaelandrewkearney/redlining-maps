@@ -16,10 +16,10 @@ public class FilterWithinBoundsHandler implements Route {
   }
 
 
-  public record SuccessResponse(String result, FeatureCollection resultFeatureCollection, Parameters parameters) {
+  public record SuccessResponse(String result, String endpoint, FeatureCollection filteredGeoJSON, Parameters parameters) {
     public record Parameters(Double minLon, Double minLat, Double maxLon, Double maxLat) {};
-    public SuccessResponse(FeatureCollection featureCollection, Parameters parameters) {
-      this("success", featureCollection, parameters);
+    public SuccessResponse(FeatureCollection filteredGeoJSON, Parameters parameters) {
+      this("success", "filterWithinBounds", filteredGeoJSON, parameters);
     }
   }
 
