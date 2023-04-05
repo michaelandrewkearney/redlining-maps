@@ -8,10 +8,10 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-public class FilterWithinBoundsHandler implements Route {
+final class FilterWithinBoundsHandler implements Route {
   private final RedliningData redliningData;
 
-  public FilterWithinBoundsHandler(RedliningData redliningData) {
+  FilterWithinBoundsHandler(RedliningData redliningData) {
     this.redliningData = redliningData;
   }
 

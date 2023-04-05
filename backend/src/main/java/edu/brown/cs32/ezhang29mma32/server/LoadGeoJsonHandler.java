@@ -7,7 +7,7 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-public class LoadGeoJsonHandler implements Route {
+final class LoadGeoJsonHandler implements Route {
   private final RedliningData redliningData;
 
   public LoadGeoJsonHandler(RedliningData redliningData) {

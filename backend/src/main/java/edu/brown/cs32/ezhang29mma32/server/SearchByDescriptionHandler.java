@@ -7,10 +7,10 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-public class SearchByDescriptionHandler implements Route {
+final class SearchByDescriptionHandler implements Route {
   private final RedliningData redliningData;
 
-  public SearchByDescriptionHandler(RedliningData redliningData) {
+  SearchByDescriptionHandler(RedliningData redliningData) {
     this.redliningData = redliningData;
   }
 
