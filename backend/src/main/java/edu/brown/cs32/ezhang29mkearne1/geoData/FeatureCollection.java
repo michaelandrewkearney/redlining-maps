@@ -1,7 +1,5 @@
 package edu.brown.cs32.ezhang29mkearne1.geoData;
 
-import edu.brown.cs32.ezhang29mkearne1.server.layer.search.Searcher;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +54,7 @@ public record FeatureCollection(String type, List<Feature> features) {
 //    return new FeatureCollection(filteredFeatures);
 //  }
 
-  public FeatureCollection withinBoundingBox(GeoJSON.BoundingBox boundingBox) {
+  public FeatureCollection withinBoundingBox(BoundingBox boundingBox) {
     List<Feature> containedFeatures = this.features.stream()
 //        .filter(feature -> boundingBox.overlaps(feature))
         .toList();

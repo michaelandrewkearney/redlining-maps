@@ -1,8 +1,7 @@
 package edu.brown.cs32.ezhang29mkearne1.server;
 
-import edu.brown.cs32.ezhang29mkearne1.Adapters;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON;
-import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.BoundingBox;
+import edu.brown.cs32.ezhang29mkearne1.geoData.BoundingBox;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.FeatureCollection;
 import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.BadRequestException;
 import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.ErrorResponse;

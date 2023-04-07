@@ -1,5 +1,6 @@
 package edu.brown.cs32.ezhang29mkearne1.server;
 
+import edu.brown.cs32.ezhang29mkearne1.geoData.BoundingBox;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.FeatureCollection;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.Feature;
@@ -55,7 +56,7 @@ final class SearchGeoJSONHandler implements Route {
       double minLat = Double.parseDouble(request.queryParams("minLat"));
       double maxLon = Double.parseDouble(request.queryParams("maxLon"));
       double maxLat = Double.parseDouble(request.queryParams("maxLat"));
-      GeoJSON.BoundingBox box = new GeoJSON.BoundingBox(minLon, minLat, maxLon, maxLat);
+      BoundingBox box = new BoundingBox(minLon, minLat, maxLon, maxLat);
       FeatureCollection results = searcher.search((GeoJSON.Feature f) -> f.overlaps(box));
       return new ServerResponses.FeatureCollectionResponse("searchGeoJSON", results).serialize();
     } catch (NumberFormatException e) {

@@ -1,19 +1,26 @@
 package edu.brown.cs32.ezhang29mkearne1.geoData;
 
-import com.squareup.moshi.*;
+import com.squareup.moshi.Json;
+import com.squareup.moshi.FromJson;
+import com.squareup.moshi.ToJson;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
 import edu.brown.cs32.ezhang29mkearne1.server.layer.search.Searcher;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class GeoJSON {
     public final static double MIN_LON = -180.0;
     public final static double MIN_LAT = -90.0;
     public final static double MAX_LON = 180.0;
     public final static double MAX_LAT = 90.0;
+    public static boolean isValidLon(double lon) {
+        return lon >= MIN_LON && lon <= MAX_LON;
+    }
+    public static boolean isValidLat(double lat) {
+        return lat >= MIN_LAT && lat <= MAX_LAT;
+    }
     public interface RawGeometry {
 
         boolean overlaps(BoundingBox box);
@@ -21,6 +28,16 @@ public class GeoJSON {
         BoundingBox getBounds();
         Position[] toFlatList();
         RawGeometry copy();
+        static Moshi.Builder getBuilder() {
+            return new Moshi.Builder()
+                    .add(Geometry.getFactory())
+                    .add(new Position.Adapter())
+                    .add(new MultiPoint.RawMultiPoint.Adapter())
+                    .add(new LineString.RawLineString.Adapter())
+                    .add(new MultiLineString.RawMultiLineString.Adapter())
+                    .add(new Polygon.RawPolygon.Adapter())
+                    .add(new MultiPolygon.RawMultiPolygon.Adapter());
+        }
     }
     public interface Geometry extends RawGeometry {
         RawGeometry coordinates();
@@ -33,7 +50,7 @@ public class GeoJSON {
         @Override
         default Position[] toFlatList() {return coordinates().toFlatList();}
         Geometry copy();
-        static PolymorphicJsonAdapterFactory getFactory() {
+        static PolymorphicJsonAdapterFactory<Geometry> getFactory() {
             return PolymorphicJsonAdapterFactory.of(Geometry.class, "type")
                         .withSubtype(Point.class, "Point")
                         .withSubtype(MultiPoint.class, "MultiPoint")
@@ -52,17 +69,16 @@ public class GeoJSON {
         }
     }
     public record Position (double lon, double lat, double alt) implements RawGeometry {
-
         @Override
         public BoundingBox getBounds() {
             return new BoundingBox(lon, lat, lon, lat);
         }
         @Override
         public boolean overlaps(BoundingBox box) {
-            return lon >= box.minLon &&
-                    lon <= box.maxLon &&
-                    lat >= box.minLat &&
-                    lat <= box.maxLat;
+            return lon >= box.minLon() &&
+                    lon <= box.maxLon() &&
+                    lat >= box.minLat() &&
+                    lat <= box.maxLat();
         }
         @Override
         public boolean isContained(BoundingBox box) {
@@ -87,7 +103,7 @@ public class GeoJSON {
                 } else if (array.length != 3) {
                     return new Position(array[0], array[1], array[2]);
                 }
-                throw new UnsupportedOperationException("Expected 2 or 3 elements but was " +
+                throw new UnsupportedOperationException("Expected array of 2 or 3 elements but was " +
                         Arrays.toString(array));
             }
         }
@@ -358,45 +374,6 @@ public class GeoJSON {
             return new MultiPolygon(coordinates().copy());
         }
     }
-
-    public record BoundingBox(Double minLon, Double minLat, Double maxLon, Double maxLat) {
-        public BoundingBox getCombinedBounds(BoundingBox box) {
-            return new BoundingBox(
-                            Math.min(minLon, box.minLon()),
-                            Math.min(minLat, box.minLat),
-                            Math.max(maxLon, box.maxLon),
-                            Math.max(maxLat, box.maxLat));
-        }
-        public boolean contains(BoundingBox box) {
-            return box.minLat() >= this.minLat
-                    && box.maxLat() <= this.maxLat
-                    && box.minLon() >= this.minLon
-                    && box.maxLon() <= this.maxLon;
-        }
-        public boolean contains(Feature feature) {return feature.geometry.isContained(this);}
-        public boolean contains(RawGeometry geometry) {return geometry.isContained(this);}
-        public boolean overlaps(BoundingBox that) {
-            boolean containsLon = this.maxLon() >= that.minLon() && this.minLon() <= that.maxLon();
-            boolean containsLat = this.maxLat() >= that.minLat() && this.minLat() <= that.maxLat();
-            return containsLon && containsLat;
-        }
-        public boolean overlaps(Feature feature) {return feature.geometry().overlaps(this);}
-        public boolean overlaps(RawGeometry geometry) {return geometry.overlaps(this);}
-        public static BoundingBox getBounds(Position[] list) {
-            double minLon = MAX_LON;
-            double minLat = MAX_LAT;
-            double maxLon = MIN_LON;
-            double maxLat = MIN_LAT;
-            for (GeoJSON.Position position: list) {
-                minLon = Math.min(minLon, position.lon());
-                minLat = Math.min(minLat, position.lat());
-                maxLon = Math.max(maxLon, position.lon());
-                maxLat = Math.max(maxLat, position.lat());
-            }
-            return new BoundingBox(minLon, minLat, maxLon, maxLat);
-        }
-    }
-
     public record Feature (
             @Json(name = "type") String type,
             @Json(name = "geometry") Geometry geometry,
@@ -411,21 +388,20 @@ public class GeoJSON {
         public boolean overlaps(BoundingBox box) {
             return geometry != null && geometry.overlaps(box);
         }
+        public static JsonAdapter<Feature> getAdapter() {
+            return RawGeometry.getBuilder()
+                    .build()
+                    .adapter(Feature.class);
+        }
     }
     public record FeatureCollection (
             @Json(name = "type") String type,
             @Json(name = "features") List<Feature> features)
              implements Searcher.Filterable<Feature> {
         public static JsonAdapter<FeatureCollection> getAdapter() {
-            return new Moshi.Builder()
-                    .add(Geometry.getFactory())
-                    .add(new Position.Adapter())
-                    .add(new MultiPoint.RawMultiPoint.Adapter())
-                    .add(new LineString.RawLineString.Adapter())
-                    .add(new MultiLineString.RawMultiLineString.Adapter())
-                    .add(new Polygon.RawPolygon.Adapter())
-                    .add(new MultiPolygon.RawMultiPolygon.Adapter())
-                    .build().adapter(FeatureCollection.class);
+            return RawGeometry.getBuilder()
+                    .build()
+                    .adapter(FeatureCollection.class);
         }
         public FeatureCollection copy() {
             List<Feature> featuresCopy = this.features.stream()
