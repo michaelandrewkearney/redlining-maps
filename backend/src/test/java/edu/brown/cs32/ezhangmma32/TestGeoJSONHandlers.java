@@ -6,11 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.squareup.moshi.JsonReader;
+import edu.brown.cs32.ezhang29mkearne1.Adapters;
+import edu.brown.cs32.ezhang29mkearne1.server.FilterWithinBoundsHandler;
 import edu.brown.cs32.ezhang29mkearne1.server.LoadGeoJsonHandler;
+import edu.brown.cs32.ezhang29mkearne1.server.LoadGeoJsonHandler.LoadResponse;
 import edu.brown.cs32.ezhang29mkearne1.server.MapLayer;
+import edu.brown.cs32.ezhang29mkearne1.server.SearchGeoJSONHandler;
+import edu.brown.cs32.ezhang29mkearne1.server.ServerState;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import okio.Buffer;
@@ -20,8 +26,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import spark.Spark;
 
-public class TestViewGeoJsonHandler {
-
+public class TestGeoJSONHandlers {
+  private final ServerState serverState = new ServerState("src/test/resources");
 
   @BeforeAll
   public static void setupBeforeEverything() {
@@ -32,9 +38,12 @@ public class TestViewGeoJsonHandler {
   @BeforeEach
   public void setup() {
     // Re-initialize state, etc. for _every_ test method run
+    serverState.clear();
 
     // In fact, restart the entire Spark server for every test!
-    start();
+    Spark.get("/loadGeoJSON", new LoadGeoJsonHandler(serverState));
+    Spark.init();
+    Spark.awaitInitialization(); // don't continue until the server is listening
   }
 
   @AfterEach
@@ -67,16 +76,17 @@ public class TestViewGeoJsonHandler {
   static private String readResponse(HttpURLConnection clientConnection) throws IOException {
     try (Buffer buffer = new Buffer()) {
       JsonReader reader = JsonReader.of(buffer.readFrom(clientConnection.getInputStream()));
-      reader.setLenient(true);
       return reader.nextSource().readUtf8();
     }
   }
 
   @Test
   public void testLoad() throws IOException {
-    HttpURLConnection conn = tryRequest("/loadGeoJson?filepath=src/test/data/mockRedliningData.json");
-
-    String jsonResponse = readResponse(conn);
-    System.out.println(jsonResponse);
+    String mockFilepath = "src/test/resources/mockRedliningData.json";
+    HttpURLConnection conn = tryRequest("/loadGeoJSON?filepath=src/test/resources/mockRedliningData.json");
+    String rawResponse = readResponse(conn);
+    LoadResponse successResponse = Adapters.ofClass(LoadResponse.class).fromJson(rawResponse);
+    assertEquals(successResponse.result(), "success");
+    assertEquals(successResponse.filepath(), mockFilepath);
   }
 }

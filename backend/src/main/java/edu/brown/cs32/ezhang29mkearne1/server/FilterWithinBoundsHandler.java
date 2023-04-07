@@ -16,10 +16,10 @@ import spark.Route;
 
 import java.util.Map;
 
-final class FilterWithinBoundsHandler implements Route {
+public final class FilterWithinBoundsHandler implements Route {
   private final ServerState state;
 
-  FilterWithinBoundsHandler(ServerState state) {
+  public FilterWithinBoundsHandler(ServerState state) {
     this.state = state;
   }
 

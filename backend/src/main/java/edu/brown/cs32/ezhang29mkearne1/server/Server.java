@@ -25,7 +25,7 @@ public final class Server {
   }
 
   public static void start() {
-    ServerState state = new ServerState(List.of());
+    ServerState state = new ServerState("");
     Spark.get("/loadGeoJSON", new LoadGeoJsonHandler(state));
     Spark.get("/filterGeoJSON", new FilterWithinBoundsHandler(state));
     Spark.get("/searchGeoJSON", new SearchGeoJSONHandler(state));
