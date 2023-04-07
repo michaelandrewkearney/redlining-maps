@@ -1,15 +1,20 @@
 import { ErrorResponse, RequestJsonFunction, SuccessResponse, isErrorResponse, isSuccessResponse, API_URL} from "./command_utils";
 
 interface LoadResponse extends SuccessResponse {
-  type: string,
   filepath: string
 }
 
 const isLoadResponse = (json: any): json is LoadResponse => {
   if (!isSuccessResponse(json)) {
+    console.log("not success repspone")
+    return false;
+  }
+  if (!(json.endpoint == "loadGeoJSON")) {
+    console.log("no enpoint matching")
     return false;
   }
   if (!("filepath" in json) || typeof json.filepath !== "string"){
+    console.log("no filepath matching")
     return false;
   }
   return true;

@@ -46,6 +46,20 @@ const ProvidenceLonLat: LonLat = {
 const initialZoom = 12;
 
 function App({ requestJson, dataPath }: AppProps) {
+  // build commands
+  const loadGeoJSON: (filepath: string) => Promise<boolean> =
+    buildLoadGeoJSON(requestJson);
+
+  const filterGeoJSON: (bbox: BBox) => Promise<GeoJSON.FeatureCollection> =
+    buildFilterGeoJSON(requestJson);
+
+  const searchGeoJSON: (
+    bbox: BBox,
+    query?: string
+  ) => Promise<GeoJSON.FeatureCollection> = buildSearchGeoJSON(requestJson);
+
+  
+
   const mapRef = React.useRef<MapRef>(null);
 
   const [viewState, setViewState] = useState({
@@ -80,19 +94,9 @@ function App({ requestJson, dataPath }: AppProps) {
   const [selectedHeader, setSelectedHeader] = useState<String>("");
   const [selectedContent, setSelectedContent] = useState<String[]>([]);
 
-  // build commands
-  const loadGeoJSON: (filepath: string) => Promise<boolean> =
-    buildLoadGeoJSON(requestJson);
-
-  const filterGeoJSON: (bbox: BBox) => Promise<GeoJSON.FeatureCollection> =
-    buildFilterGeoJSON(requestJson);
-
-  const searchGeoJSON: (
-    bbox: BBox,
-    query?: string
-  ) => Promise<GeoJSON.FeatureCollection> = buildSearchGeoJSON(requestJson);
-
-  loadGeoJSON(dataPath);
+  useEffect(() => {
+    loadGeoJSON(dataPath);
+  }, [])
 
   useEffect(() => {
     if (mapBbox === undefined) {
