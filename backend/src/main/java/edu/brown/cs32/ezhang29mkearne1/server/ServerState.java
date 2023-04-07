@@ -2,14 +2,13 @@ package edu.brown.cs32.ezhang29mkearne1.server;
 
 import com.squareup.moshi.JsonAdapter;
 import edu.brown.cs32.ezhang29mkearne1.Adapters;
+import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.FeatureCollection;
 import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.DatasourceException;
 import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.IllegalFilepathException;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -17,12 +16,12 @@ public class ServerState {
   private FeatureCollection featureCollection;
 
  // TODO: protect file access
-  private final List<String> allowedDirs;
+  private final String allowedDir;
   private String filepath;
 
-  public ServerState(List<String> allowedDirs) {
+  public ServerState(String allowedDir) {
     this.featureCollection = null;
-    this.allowedDirs = allowedDirs;
+    this.allowedDir = allowedDir;
     this.filepath = null;
   }
 
@@ -32,11 +31,10 @@ public class ServerState {
       throw new IllegalFilepathException("msg", Map.of());
     }
     try {
-      JsonAdapter<FeatureCollection> geoJsonadapter =
-          Adapters.ofClass(FeatureCollection.class);
+      JsonAdapter<FeatureCollection> adapter = GeoJSON.FeatureCollection.getAdapter();
       BufferedReader br = new BufferedReader(new FileReader(filepath));
       String geoJson = br.lines().collect(Collectors.joining());
-      this.featureCollection = geoJsonadapter.fromJson(geoJson);
+      this.featureCollection = adapter.fromJson(geoJson);
       this.filepath = filepath;
     } catch (IOException e) {
       throw new DatasourceException("msg", Map.of());

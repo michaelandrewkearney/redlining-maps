@@ -28,7 +28,7 @@ public final class LoadGeoJsonHandler implements Route {
   }
 
     @Override
-    public Object handle(Request request, Response response) throws ServerResponseException {
+    public Object handle(Request request, Response response) {
       String filepath = request.queryParams("filepath");
       try {
         state.load(filepath);
