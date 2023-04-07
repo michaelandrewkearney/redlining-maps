@@ -30,12 +30,12 @@ public final class LoadGeoJsonHandler implements Route {
     public Object handle(Request request, Response response) {
       String filepath = request.queryParams("filepath");
       if (filepath == null) {
-        //return error response
+        return new ErrorResponse(new BadRequestException("Need parameter 'filepath'", Map.copyOf(request.params())));
       }
-      //filepath = filepath.replace("%2F", '/');
-      System.out.println(filepath + " is file: " + new File(filepath).isFile());
       try {
+        System.out.println(String.format("Loading file %s...", filepath));
         state.load(filepath);
+        System.out.println(String.format("File %s loaded.", filepath));
         LoadResponse resp = new LoadResponse(filepath);
         return Adapters.ofClass(LoadResponse.class).toJson(resp);
       } catch (ServerResponseException e) {

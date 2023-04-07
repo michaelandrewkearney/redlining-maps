@@ -42,13 +42,13 @@ public class GeoJSON {
     public interface Geometry extends RawGeometry {
         RawGeometry coordinates();
         @Override
-        default boolean overlaps(BoundingBox box) {return coordinates().overlaps(box);}
+        default boolean overlaps(BoundingBox box) {return (coordinates() == null) ? false : coordinates().overlaps(box);}
         @Override
-        default boolean isContained(BoundingBox box) {return coordinates().isContained(box);}
+        default boolean isContained(BoundingBox box) {return (coordinates() == null) ? false : coordinates().isContained(box);}
         @Override
-        default BoundingBox getBounds() {return coordinates().getBounds();}
+        default BoundingBox getBounds() {return (coordinates() == null) ? new BoundingBox(MAX_LON,MAX_LAT) : coordinates().getBounds();}
         @Override
-        default Position[] toFlatList() {return coordinates().toFlatList();}
+        default Position[] toFlatList() {return (coordinates() == null) ? new Position[]{} : coordinates().toFlatList();}
         Geometry copy();
         static PolymorphicJsonAdapterFactory<Geometry> getFactory() {
             return PolymorphicJsonAdapterFactory.of(Geometry.class, "type")

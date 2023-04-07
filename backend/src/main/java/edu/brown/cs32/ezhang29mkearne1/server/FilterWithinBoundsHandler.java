@@ -33,17 +33,16 @@ public final class FilterWithinBoundsHandler implements Route {
   @Override
   public Object handle(Request request, Response response) {
     try {
-      Searcher<FeatureCollection, Feature> searcher = new ExpensiveSearcher<>(this.state.getFeatureCollection());
       double minLon = Double.parseDouble(request.queryParams("minLon"));
       double minLat = Double.parseDouble(request.queryParams("minLat"));
       double maxLon = Double.parseDouble(request.queryParams("maxLon"));
       double maxLat = Double.parseDouble(request.queryParams("maxLat"));
 
       BoundingBox boundingBox = new BoundingBox(minLon, minLat, maxLon, maxLat);
-      FeatureCollection results = searcher.search((GeoJSON.Feature feat) -> boundingBox.contains(feat));
+      FeatureCollection results = state.getFilterer().search((GeoJSON.Feature feat) -> boundingBox.contains(feat));
       return new ServerResponses.FeatureCollectionResponse("filterGeoJSON", results).serialize();
     } catch (NumberFormatException e) {
-      return new ErrorResponse(new BadRequestException("Must pass four parseable doubles.", Map.copyOf(request.params())));
+      return new ErrorResponse(new BadRequestException("Must pass four parseable doubles.", Map.copyOf(request.params()))).serialize();
     } catch (DatasourceException e) {
       return new ErrorResponse(e).serialize();
     }

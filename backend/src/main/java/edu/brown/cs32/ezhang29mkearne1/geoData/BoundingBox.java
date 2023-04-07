@@ -80,7 +80,7 @@ public record BoundingBox(double minLon, double minLat, double maxLon, double ma
      * @return if this fully contains feature
      */
     public boolean contains(GeoJSON.Feature feature) {
-        return feature.geometry().isContained(this);
+        return (feature.geometry() == null) ? false : feature.geometry().isContained(this);
     }
     /**
      * Checks whether a BoundingBox fully contains a GeoJSON RawGeometry object.
@@ -88,7 +88,7 @@ public record BoundingBox(double minLon, double minLat, double maxLon, double ma
      * @return if this fully contains geometry
      */
     public boolean contains(GeoJSON.RawGeometry geometry) {
-        return geometry.isContained(this);
+        return (geometry == null) ? false : geometry.isContained(this);
     }
     /**
      * Checks whether this overlaps with that. This method is always commutative.

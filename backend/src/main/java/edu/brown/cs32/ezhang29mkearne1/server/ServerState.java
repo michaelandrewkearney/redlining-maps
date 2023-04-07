@@ -59,7 +59,7 @@ public class ServerState {
     if (this.featureCollection == null) {
       throw new DatasourceException("No GeoJSON data has been loaded", Map.of());
     }
-    return this.featureCollection.copy();
+    return this.featureCollection;
   }
 
     public Searcher<FeatureCollection, GeoJSON.Feature> getFilterer() throws DatasourceException {

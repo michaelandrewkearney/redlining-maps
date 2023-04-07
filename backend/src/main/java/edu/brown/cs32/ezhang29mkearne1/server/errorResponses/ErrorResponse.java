@@ -1,20 +1,24 @@
 package edu.brown.cs32.ezhang29mkearne1.server.errorResponses;
 
 ;
+import com.squareup.moshi.Moshi;
 import edu.brown.cs32.ezhang29mkearne1.Adapters;
+import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON;
+import edu.brown.cs32.ezhang29mkearne1.server.response.ServerResponses;
+
 import java.util.Map;
 
 /**
  * @param
  */
-public record ErrorResponse(ServerResponseException exception) {
-
+public record ErrorResponse(String result, String msg, String exceptionType) {
+  public ErrorResponse(ServerResponseException e) {
+    this("error", e.getMessage(), e.getClass().toString());
+  }
   public String serialize() {
-    Map<String, Object> errorMap = Map.of(
-        "result", exception.getErrorCode().toStringCode(),
-        "message", exception.getMessage(),
-        "parameters", exception.getParameters()
-    );
-    return Adapters.ofMap().indent("    ").toJson(errorMap);
+    return new Moshi.Builder()
+            .build()
+            .adapter(ErrorResponse.class)
+            .toJson(this);
   }
 }

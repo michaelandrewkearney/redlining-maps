@@ -94,7 +94,6 @@ a:hover {
 }
 
 .output-wrapper {
-  color: white;
   flex-grow: 1;
   overflow-y: scroll;
 }
