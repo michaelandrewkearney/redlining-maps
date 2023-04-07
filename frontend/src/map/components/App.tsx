@@ -5,6 +5,7 @@ import Map, {
   LngLatBoundsLike,
   MapLayerMouseEvent,
   MapRef,
+  NavigationControl,
   Source,
   ViewStateChangeEvent,
 } from "react-map-gl";
@@ -188,7 +189,7 @@ function App({ requestJson, dataPath }: AppProps) {
   };
 
   return (
-    <div className="App">
+    <div className="App" role="main" aria-label="Interactive Redlining Map">
       <Map
         ref={mapRef}
         mapboxAccessToken={ACCESS_TOKEN}
@@ -223,14 +224,24 @@ function App({ requestJson, dataPath }: AppProps) {
             paint={searchThinLineLayer.paint}
           />
         </Source>
+        <NavigationControl />
       </Map>
-      <div className="infobox">
-        <div className="header-wrapper">
+      <div
+        className="infobox"
+        role="region"
+        aria-label="About this Map"
+        tabIndex={1}
+      >
+        <div className="header-wrapper" aria-label="Redlining" tabIndex={2}>
           <Header />
         </div>
         <hr />
-        <div className="input-wrapper">
-          <div>Search neighborhoods by description.</div>
+        <div
+          className="input-wrapper"
+          role="Search"
+          aria-label="Search neighborhoods by description"
+        >
+          <div aria-hidden>Search neighborhoods by description.</div>
           <SearchBox
             disabled={disabled}
             handleSearch={handleSearch}
