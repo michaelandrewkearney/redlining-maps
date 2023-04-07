@@ -1,7 +1,6 @@
 package edu.brown.cs32.ezhang29mkearne1.server;
 
 import com.squareup.moshi.JsonAdapter;
-import edu.brown.cs32.ezhang29mkearne1.Adapters;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.FeatureCollection;
 import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.DatasourceException;
@@ -23,12 +22,10 @@ public class ServerState {
 
  // TODO: protect file access
   private final String allowedDir;
-  private String filepath;
 
   public ServerState(String allowedDir) {
     this.featureCollection = null;
     this.allowedDir = allowedDir;
-    this.filepath = null;
   }
 
   public void load(String filepath)
@@ -41,16 +38,15 @@ public class ServerState {
       BufferedReader br = new BufferedReader(new FileReader(filepath));
       String geoJson = br.lines().collect(Collectors.joining());
       this.featureCollection = adapter.fromJson(geoJson);
-      this.filepath = filepath;
       filterer = new ExpensiveSearcher<>(this.featureCollection);
       searcher = new CachedSearcher<>(new ExpensiveSearcher<>(this.featureCollection));
     } catch (IOException e) {
       throw new DatasourceException("msg", Map.of());
     }
   }
+
   public void clear() {
     this.featureCollection = null;
-    this.filepath = null;
     this.searcher = null;
     this.filterer = null;
   }
