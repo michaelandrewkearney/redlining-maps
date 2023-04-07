@@ -46,6 +46,9 @@ public final class FilterWithinBoundsHandler implements Route {
       return new ErrorResponse(new BadRequestException("Must pass four parseable doubles.", Map.copyOf(request.params())));
     } catch (DatasourceException e) {
       return new ErrorResponse(e).serialize();
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw e;
     }
   }
 }

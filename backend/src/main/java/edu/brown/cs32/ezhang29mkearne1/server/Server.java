@@ -1,6 +1,8 @@
 package edu.brown.cs32.ezhang29mkearne1.server;
 import static spark.Spark.after;
 
+import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.DatasourceException;
+import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.IllegalFilepathException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,10 +13,10 @@ import spark.Spark;
  * API endpoints for both CSV & Weather, and structuring of the cached weather caller are also implemented here.
  */
 public final class Server {
-  private final static String REDLINING_DATA_PATH = "src/main/geodata/usa.json";
+  private final static String REDLINING_DATA_PATH = "src/main/resources/maplayers/redlining/usa.json";
 
-  public static void main(String[] args) throws IOException {
-
+  public static void main(String[] args)
+      throws DatasourceException, IllegalFilepathException {
     Spark.port(3232);
     after((request, response) -> {
               response.header("Access-Control-Allow-Origin", "*");
@@ -24,8 +26,12 @@ public final class Server {
     start();
   }
 
-  public static void start() {
+  public static void start() throws DatasourceException, IllegalFilepathException {
+    System.out.println("Starting server...");
+    System.out.println("Loading USA redlining data...");
     ServerState state = new ServerState("");
+    state.load(REDLINING_DATA_PATH);
+
     Spark.get("/loadGeoJSON", new LoadGeoJsonHandler(state));
     Spark.get("/filterGeoJSON", new FilterWithinBoundsHandler(state));
     Spark.get("/searchGeoJSON", new SearchGeoJSONHandler(state));

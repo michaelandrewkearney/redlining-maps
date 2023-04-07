@@ -32,10 +32,10 @@ public final class LoadGeoJsonHandler implements Route {
       if (filepath == null) {
         //return error response
       }
-      //filepath = filepath.replace("%2F", '/');
-      System.out.println(filepath + " is file: " + new File(filepath).isFile());
       try {
+        System.out.println("loading file");
         state.load(filepath);
+        System.out.println("loaded file");
         LoadResponse resp = new LoadResponse(filepath);
         return Adapters.ofClass(LoadResponse.class).toJson(resp);
       } catch (ServerResponseException e) {
