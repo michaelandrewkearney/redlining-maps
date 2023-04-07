@@ -9,18 +9,26 @@ import Map, {
   ViewStateChangeEvent,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { ACCESS_TOKEN } from "../../private/keys"
+import { ACCESS_TOKEN } from "../../private/keys";
 import "../styles/App.css";
-import { geoLayer, searchFillLayer, searchLineLayer, searchThinLineLayer } from "../../overlays";
+import {
+  geoLayer,
+  searchFillLayer,
+  searchLineLayer,
+  searchThinLineLayer,
+} from "../../overlays";
 import { RequestJsonFunction, BBox } from "../command_utils";
 import { buildLoadGeoJSON } from "../loadGeoJSON";
 import { buildFilterGeoJSON } from "../filterGeoJSON";
 import Header from "./Header";
-import TextBox from "./TextBox"
+import TextBox from "./TextBox";
 import { buildSearchGeoJSON } from "../searchGeoJSON";
 import SearchBox from "./SearchBox";
 
-const emptyFC: GeoJSON.FeatureCollection = {type: 'FeatureCollection', features: []}
+const emptyFC: GeoJSON.FeatureCollection = {
+  type: "FeatureCollection",
+  features: [],
+};
 
 interface LonLat {
   readonly lon: number;
@@ -29,6 +37,7 @@ interface LonLat {
 
 interface AppProps {
   requestJson: RequestJsonFunction;
+  dataPath: string;
 }
 const ProvidenceLonLat: LonLat = {
   lon: -71.418884,
@@ -36,7 +45,7 @@ const ProvidenceLonLat: LonLat = {
 };
 const initialZoom = 12;
 
-function App({ requestJson }: AppProps) {
+function App({ requestJson, dataPath }: AppProps) {
   const mapRef = React.useRef<MapRef>(null);
 
   const [viewState, setViewState] = useState({
@@ -61,13 +70,10 @@ function App({ requestJson }: AppProps) {
     };
   }
 
-  const [overlay, setOverlay] = useState<GeoJSON.FeatureCollection>(
-    emptyFC
-  );
+  const [overlay, setOverlay] = useState<GeoJSON.FeatureCollection>(emptyFC);
 
-  const [searchOverlay, setSearchOverlay] = useState<GeoJSON.FeatureCollection>(
-    emptyFC
-  );
+  const [searchOverlay, setSearchOverlay] =
+    useState<GeoJSON.FeatureCollection>(emptyFC);
 
   const [disabled, setDisabled] = useState<boolean>(false);
 
@@ -81,10 +87,13 @@ function App({ requestJson }: AppProps) {
   const filterGeoJSON: (bbox: BBox) => Promise<GeoJSON.FeatureCollection> =
     buildFilterGeoJSON(requestJson);
 
-  const searchGeoJSON: (bbox: BBox, query?: string) => Promise<GeoJSON.FeatureCollection> =
-    buildSearchGeoJSON(requestJson);
+  const searchGeoJSON: (
+    bbox: BBox,
+    query?: string
+  ) => Promise<GeoJSON.FeatureCollection> = buildSearchGeoJSON(requestJson);
 
-  
+  loadGeoJSON(dataPath);
+
   useEffect(() => {
     if (mapBbox === undefined) {
       return;
@@ -103,16 +112,34 @@ function App({ requestJson }: AppProps) {
     const map = mapRef.current;
     if (map !== null) {
       const features: GeoJSON.Feature[] = map.queryRenderedFeatures(
-        [[e.point.x, e.point.y],
-        [e.point.x, e.point.y]],
-        {layers: ['geo_data']});
+        [
+          [e.point.x, e.point.y],
+          [e.point.x, e.point.y],
+        ],
+        { layers: ["geo_data"] }
+      );
       const f: GeoJSON.Feature = features[0];
       if (f && f.properties) {
-        setSelectedHeader(((f.properties.holc_id) ? "#" + f.properties.holc_id.toString() : "Area") + " in " + (f.properties.city && f.properties.state) ? f.properties.city.toString()+", "+f.properties.state.toString() : "Unknown City"),
-        setSelectedContent([
-          "Name: " + ((f.properties.name) ? f.properties.name : "Unknown"),"HOLC Grade: " + ((f.properties.holc_grade) ? f.properties.holc_grade : "Unknown"),
-          "Description: " + ((f.properties.area_description_data) ? f.properties.area_description_data.toString() : "Unknown")
-        ]);
+        setSelectedHeader(
+          (f.properties.holc_id
+            ? "#" + f.properties.holc_id.toString()
+            : "Area") +
+            " in " +
+            (f.properties.city && f.properties.state)
+            ? f.properties.city.toString() +
+                ", " +
+                f.properties.state.toString()
+            : "Unknown City"
+        ),
+          setSelectedContent([
+            "Name: " + (f.properties.name ? f.properties.name : "Unknown"),
+            "HOLC Grade: " +
+              (f.properties.holc_grade ? f.properties.holc_grade : "Unknown"),
+            "Description: " +
+              (f.properties.area_description_data
+                ? f.properties.area_description_data.toString()
+                : "Unknown"),
+          ]);
       } else {
         setSelectedHeader("");
         setSelectedContent([]);
@@ -130,11 +157,11 @@ function App({ requestJson }: AppProps) {
 
   const handleMoveEnd = () => {
     updateMapBBox();
-  }
+  };
 
   const handleZoomEnd = () => {
     updateMapBBox();
-  }
+  };
 
   const updateMapBBox = () => {
     if (mapRef.current !== null) {
@@ -143,16 +170,18 @@ function App({ requestJson }: AppProps) {
   };
 
   const handleSearch = (input: string) => {
-    searchGeoJSON(getMapBounds(), input).then((data: GeoJSON.FeatureCollection) => {
-      setSearchOverlay(data);
-    });
+    searchGeoJSON(getMapBounds(), input).then(
+      (data: GeoJSON.FeatureCollection) => {
+        setSearchOverlay(data);
+      }
+    );
     setDisabled(true);
-  }
+  };
 
   const handleSearchClear = () => {
     setSearchOverlay(emptyFC);
     setDisabled(false);
-  }
+  };
 
   return (
     <div className="App">
@@ -174,28 +203,39 @@ function App({ requestJson }: AppProps) {
           <Layer id={geoLayer.id} type={geoLayer.type} paint={geoLayer.paint} />
         </Source>
         <Source id="search_data" type="geojson" data={searchOverlay}>
-          <Layer id={searchFillLayer.id} type={searchFillLayer.type} paint={searchFillLayer.paint} />
-          <Layer id={searchLineLayer.id} type={searchLineLayer.type} paint={searchLineLayer.paint} />
-          <Layer id={searchThinLineLayer.id} type={searchThinLineLayer.type} paint={searchThinLineLayer.paint} />
+          <Layer
+            id={searchFillLayer.id}
+            type={searchFillLayer.type}
+            paint={searchFillLayer.paint}
+          />
+          <Layer
+            id={searchLineLayer.id}
+            type={searchLineLayer.type}
+            paint={searchLineLayer.paint}
+          />
+          <Layer
+            id={searchThinLineLayer.id}
+            type={searchThinLineLayer.type}
+            paint={searchThinLineLayer.paint}
+          />
         </Source>
       </Map>
       <div className="infobox">
         <div className="header-wrapper">
-        <Header/>
+          <Header />
         </div>
-        <hr/>
+        <hr />
         <div className="input-wrapper">
-        <div>Search neighborhoods by description.</div>
-        <SearchBox disabled={disabled}
-          handleSearch={handleSearch}
-          handleSearchClear={handleSearchClear}/>
+          <div>Search neighborhoods by description.</div>
+          <SearchBox
+            disabled={disabled}
+            handleSearch={handleSearch}
+            handleSearchClear={handleSearchClear}
+          />
         </div>
-        <hr/>
+        <hr />
         <div className="output-wrapper">
-        <TextBox
-            header={selectedHeader}
-            content={selectedContent}
-            />
+          <TextBox header={selectedHeader} content={selectedContent} />
         </div>
       </div>
     </div>

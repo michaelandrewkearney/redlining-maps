@@ -6,6 +6,9 @@ import { fetchJson } from "./map/command_utils";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App requestJson={fetchJson} />
+    <App
+      requestJson={fetchJson}
+      dataPath={"src/main/resources/maplayers/redlining/usa.json"}
+    />
   </React.StrictMode>
 );
