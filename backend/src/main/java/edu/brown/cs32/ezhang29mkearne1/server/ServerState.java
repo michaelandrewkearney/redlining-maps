@@ -18,10 +18,12 @@ public class ServerState {
 
  // TODO: protect file access
   private final List<String> allowedDirs;
+  private String filepath;
 
   public ServerState(List<String> allowedDirs) {
-    this.featureCollection= null;
+    this.featureCollection = null;
     this.allowedDirs = allowedDirs;
+    this.filepath = null;
   }
 
   public void load(String filepath)
@@ -35,12 +37,14 @@ public class ServerState {
       BufferedReader br = new BufferedReader(new FileReader(filepath));
       String geoJson = br.lines().collect(Collectors.joining());
       this.featureCollection = geoJsonadapter.fromJson(geoJson);
+      this.filepath = filepath;
     } catch (IOException e) {
       throw new DatasourceException("msg", Map.of());
     }
   }
   public void clear() {
     this.featureCollection = null;
+    this.filepath = null;
   }
 
   public FeatureCollection getFeatureCollection() throws DatasourceException {
