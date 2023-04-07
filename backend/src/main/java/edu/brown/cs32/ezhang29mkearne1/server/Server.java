@@ -2,6 +2,8 @@ package edu.brown.cs32.ezhang29mkearne1.server;
 import static spark.Spark.after;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import spark.Spark;
 
 /**
@@ -23,13 +25,7 @@ public final class Server {
   }
 
   public static void start() {
-    State state = new State();
-    try {
-      state.init();
-    } catch (IOException e) {
-      e.printStackTrace();
-      System.exit(1);
-    }
+    ServerState state = new ServerState(List.of());
     Spark.get("/loadGeoJSON", new LoadGeoJsonHandler(state));
     Spark.get("/filterGeoJSON", new FilterWithinBoundsHandler(state));
     Spark.get("/searchGeoJSON", new SearchGeoJSONHandler(state));

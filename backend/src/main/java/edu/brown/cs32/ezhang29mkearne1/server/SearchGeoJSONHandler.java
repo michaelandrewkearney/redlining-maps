@@ -18,15 +18,15 @@ import java.util.ArrayList;
 import java.util.Map;
 
 final class SearchGeoJSONHandler implements Route {
-  private final State state;
+  private final ServerState state;
   private Searcher<FeatureCollection, Feature> searcher;
   private final Searcher<FeatureCollection, Feature> cachedSearcher;
   private FeatureCollection stashedSearch = new FeatureCollection("FeatureCollection", new ArrayList<>());
 
-  SearchGeoJSONHandler(State state) {
+  SearchGeoJSONHandler(ServerState state) {
     this.state = state;
     searcher = new ExpensiveSearcher<>(stashedSearch);
-    cachedSearcher = new CachedSearcher<>(new ExpensiveSearcher<>(state.getRedliningLayer().getFeatureCollection()), 1000, 360);
+    cachedSearcher = new CachedSearcher<>(new ExpensiveSearcher<>(state.getFeatureCollection()), 1000, 360);
   }
 
   public record SuccessResponse(String result, FeatureCollection matches, Parameters parameters) {
@@ -57,7 +57,7 @@ final class SearchGeoJSONHandler implements Route {
       double maxLon = Double.parseDouble(request.queryParams("maxLon"));
       double maxLat = Double.parseDouble(request.queryParams("maxLat"));
       BoundingBox box = new BoundingBox(minLon, minLat, maxLon, maxLat);
-      FeatureCollection results = searcher.search((GeoJSON.Feature f) -> f.overlaps(box));
+      FeatureCollection results = searcher.search((GeoJSON.Feature feat) -> box.contains(feat));
       return new ServerResponses.FeatureCollectionResponse("searchGeoJSON", results).serialize();
     } catch (NumberFormatException e) {
       return new ErrorResponse(new BadRequestException("BoundingBox params required.", Map.copyOf(request.params()))).serialize();

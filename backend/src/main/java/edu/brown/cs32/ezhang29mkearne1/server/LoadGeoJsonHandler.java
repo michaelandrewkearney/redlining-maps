@@ -5,6 +5,7 @@ import edu.brown.cs32.ezhang29mkearne1.server.LoadGeoJsonHandler.LoadResponse.Lo
 import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.BadRequestException;
 import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.DatasourceException;
 import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.ErrorResponse;
+import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.ServerResponseException;
 import edu.brown.cs32.ezhang29mkearne1.server.response.ServerResponses.FeatureCollectionResponse;
 import spark.Request;
 import spark.Response;
@@ -13,9 +14,9 @@ import spark.Route;
 import java.util.Map;
 
 public final class LoadGeoJsonHandler implements Route {
-  private final State state;
+  private final ServerState state;
 
-  public LoadGeoJsonHandler(State state) {
+  public LoadGeoJsonHandler(ServerState state) {
     this.state = state;
   }
 
@@ -26,15 +27,15 @@ public final class LoadGeoJsonHandler implements Route {
     public record LoadParameters(String filepath) {}
   }
 
-  @Override
-  public Object handle(Request request, Response response) throws Exception {
-    String filepath = request.queryParams("filepath");
-    if (!state.isLayerAvailable(filepath)) {
-      return new ErrorResponse(new BadRequestException(String.format("%s is not valid filepath.", filepath), Map.copyOf(request.params()))).serialize();
-    }
-    if (state.isLayerLoaded(filepath) || state.loadLayer(filepath)) {
-      return new FeatureCollectionResponse("loadGeoJSON", state.getLoadedLayer(filepath).getFeatureCollection());
-    }
-    return new ErrorResponse(new DatasourceException(String.format("Unable to load file '%s'", filepath), Map.copyOf(request.params())));
+    @Override
+    public Object handle(Request request, Response response) throws ServerResponseException {
+      String filepath = request.queryParams("filepath");
+      try {
+        state.load(filepath);
+        LoadResponse resp = new LoadResponse(filepath, new LoadParameters(filepath));
+        return Adapters.ofClass(LoadResponse.class).toJson(resp);
+      } catch (ServerResponseException e) {
+        return new ErrorResponse(e).serialize();
+      }
     }
   }
