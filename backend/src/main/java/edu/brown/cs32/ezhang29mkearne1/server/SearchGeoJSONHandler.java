@@ -19,7 +19,6 @@ import java.util.Map;
 public final class SearchGeoJSONHandler implements Route {
   private final ServerState state;
   private Searcher<FeatureCollection, Feature> filterer;
-
   public SearchGeoJSONHandler(ServerState state) {
     this.state = state;
   }
@@ -46,7 +45,6 @@ public final class SearchGeoJSONHandler implements Route {
       filterer = new ExpensiveSearcher<>(results);
     }
     try {
-      
       double minLon = Double.parseDouble(request.queryParams("minLon"));
       double minLat = Double.parseDouble(request.queryParams("minLat"));
       double maxLon = Double.parseDouble(request.queryParams("maxLon"));
@@ -57,6 +55,5 @@ public final class SearchGeoJSONHandler implements Route {
     } catch (NumberFormatException e) {
       return new ErrorResponse(new BadRequestException("BoundingBox params required.", Map.copyOf(request.params()))).serialize();
     }
-    return new ErrorResponse(new BadJsonException("search not implement yet whoops", "json"));
   }
 }
