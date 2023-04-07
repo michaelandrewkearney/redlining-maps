@@ -1,12 +1,13 @@
 package edu.brown.cs32.ezhangmma32;
 
 
+import static edu.brown.cs32.ezhang29mkearne1.server.Server.start;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.squareup.moshi.JsonReader;
-import edu.brown.cs32.ezhang29mma32.server.LoadGeoJsonHandler;
-import edu.brown.cs32.ezhang29mma32.server.RedliningData;
+import edu.brown.cs32.ezhang29mkearne1.server.LoadGeoJsonHandler;
+import edu.brown.cs32.ezhang29mkearne1.server.MapLayer;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -28,25 +29,18 @@ public class TestViewGeoJsonHandler {
     Logger.getLogger("").setLevel(Level.WARNING);
   }
 
-  final RedliningData loadedGeoData = new RedliningData();
-
   @BeforeEach
   public void setup() {
     // Re-initialize state, etc. for _every_ test method run
-    loadedGeoData.clear();
 
     // In fact, restart the entire Spark server for every test!
-    Spark.get("/loadGeoJson", new LoadGeoJsonHandler(loadedGeoData));
-
-    Spark.init();
-    Spark.awaitInitialization(); // don't continue until the server is listening
+    start();
   }
 
   @AfterEach
   public void teardown() {
     // Gracefully stop Spark listening on both endpoints
-    Spark.unmap("/loadGeoJson");
-    Spark.unmap("/viewGeoJson");
+    Spark.stop();
     Spark.awaitStop(); // don't proceed until the server is stopped
   }
 

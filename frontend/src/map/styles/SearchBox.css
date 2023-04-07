@@ -1,0 +1,37 @@
+.inputbox-wrapper {
+    flex-grow: 0;
+    flex-shrink: 1;
+
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.inputbox-wrapper * {
+    height: 30px;
+    margin: 0;
+}
+
+.inputbox-wrapper > input {
+    flex-grow: 1;
+    flex-shrink: 0;
+    min-width: 0;
+    font-family: var(--monospace);
+    color: var(--darker-green);
+    font-size: 1em;
+    margin-right: 5px;
+    background-color: rgb(var(--color));
+    color: rgb(var(--background-color));
+}
+  
+.inputbox-wrapper > button {
+    padding: 4px;
+    flex-grow: 0;
+    flex-shrink: 1;
+    background-color: rgb(var(--color));
+    
+}
+
+.inputbox-wrapper > button > img {
+    height: 100%;
+}

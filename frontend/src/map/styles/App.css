@@ -1,0 +1,105 @@
+.App {
+  /* setup global style variables*/
+  --fonts: Fira Sans, Segoe UI, "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Droid Sans", sans-serif, -apple-system;
+  --monospace: "Fira Code", "Apercu Mono", source-code-pro, Menlo, Monaco, Consolas, "Consola", "Courier New", monospace;
+
+  /* variables initially set for light mode */
+  /* --color: #213547; */
+  --color: 36, 36, 36;
+  --background-color: 255, 255, 255;
+  --a-color: blue;
+  --a-hover-color: teal;
+  --a-visited-color: purple;
+}
+
+/* set variables for dark mode */
+@media (prefers-color-scheme: dark) {
+  .App {
+    --color: 255, 255, 255;
+    --background-color: 36, 36, 36;
+    --a-color: orange;
+    --a-hover-color: fuchsia;
+    --a-visited-color: orange;
+  }
+}
+
+/* Font styling */
+.App {
+  font-family: var(--fonts);
+  color: var(--color);
+  background-color: var(--background-color);
+}
+
+a {
+  color: var(--a-color);
+  text-decoration: none;
+  transition: color .25s;
+}
+
+a:hover {
+  color: var(--a-hover-color);
+}
+
+/* Sizing */
+.App {
+  height: 100vh;
+  width: 100vw;
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
+}
+
+.mapboxgl-map {
+  flex-grow: 1;
+}
+
+.infobox {
+  background-color: rgba(var(--background-color), 0.8);
+  color: var(--color);
+  margin: 20px;
+  padding: 20px;
+  position: absolute;
+  overflow: hidden;
+  width: 40vw;
+  max-width: 350px;
+  min-width: 200px;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
+}
+
+.infobox hr {
+  width: 100%;
+  margin: 5px;
+}
+
+.infobox p {
+  font-size: 11pt;
+}
+
+.header-wrapper {
+  line-height: 1.4em;
+  margin: 10px 0px;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
+}
+
+.output-wrapper {
+  color: white;
+  flex-grow: 1;
+  overflow-y: scroll;
+}
+
+.App .search-wrapper input {
+  padding: 5px;
+  font-size: large;
+}
