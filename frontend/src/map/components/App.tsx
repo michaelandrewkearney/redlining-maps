@@ -37,7 +37,7 @@ interface LonLat {
 
 interface AppProps {
   requestJson: RequestJsonFunction;
-  dataPath: string;
+  dataPath?: string;
 }
 const ProvidenceLonLat: LonLat = {
   lon: -71.418884,
@@ -57,8 +57,6 @@ function App({ requestJson, dataPath }: AppProps) {
     bbox: BBox,
     query?: string
   ) => Promise<GeoJSON.FeatureCollection> = buildSearchGeoJSON(requestJson);
-
-  
 
   const mapRef = React.useRef<MapRef>(null);
 
@@ -95,8 +93,10 @@ function App({ requestJson, dataPath }: AppProps) {
   const [selectedContent, setSelectedContent] = useState<String[]>([]);
 
   useEffect(() => {
-    loadGeoJSON(dataPath);
-  }, [])
+    if (dataPath) {
+      loadGeoJSON(dataPath);
+    }
+  }, []);
 
   useEffect(() => {
     if (mapBbox === undefined) {
