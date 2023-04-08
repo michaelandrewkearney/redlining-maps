@@ -1,12 +1,12 @@
-package edu.brown.cs32.ezhang29mkearne1.server.layer;
+package edu.brown.cs32.ezhang29mkearne1.server;
 
 import com.squareup.moshi.JsonAdapter;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.Feature;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.FeatureCollection;
-import edu.brown.cs32.ezhang29mkearne1.server.layer.search.CachedSearcher;
-import edu.brown.cs32.ezhang29mkearne1.server.layer.search.ExpensiveSearcher;
-import edu.brown.cs32.ezhang29mkearne1.server.layer.search.Searcher;
+import edu.brown.cs32.ezhang29mkearne1.server.search.CachedSearcher;
+import edu.brown.cs32.ezhang29mkearne1.server.search.ExpensiveSearcher;
+import edu.brown.cs32.ezhang29mkearne1.server.search.Searcher;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
