@@ -17,6 +17,7 @@ There are no known errors or bugs.
 ### Backend
 On the backend, we used random testing to check for the validity of BoundingBoxes and our containment functions. We tested that our cached searcher returns hits instead of always loading. We checked our endpoint handlers and GeoJSON parsing.
 ### Frontend
+On the front end, we use mocking to test our handler functions, which were designed for data injection.
 
 
 ## How To
