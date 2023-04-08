@@ -27,10 +27,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import spark.Spark;
-import spark.utils.IOUtils;
 
 public class TestGeoJSONHandlers {
-  private ServerState serverState;
+  private final ServerState serverState = new ServerState("src/test/resources");
 
   @BeforeAll
   public static void setupBeforeEverything() {
@@ -39,13 +38,14 @@ public class TestGeoJSONHandlers {
   }
 
   @BeforeEach
-  public void setup() throws DatasourceException {
+  public void setup() {
     // Re-initialize state, etc. for _every_ test method run
-    try {
-      start("src/test/resources/maplayers/redlining/test.json");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    serverState.clear();
+
+    // In fact, restart the entire Spark server for every test!
+    Spark.get("/loadGeoJSON", new LoadGeoJsonHandler(serverState));
+    Spark.init();
+    Spark.awaitInitialization(); // don't continue until the server is listening
   }
 
   @AfterEach
@@ -129,4 +129,5 @@ public class TestGeoJSONHandlers {
 //    assertEquals(successResponse.result(), "success");
 //    assertEquals(successResponse.featureCollection().type(), "FeatureCollection");
 //  }
+
 }

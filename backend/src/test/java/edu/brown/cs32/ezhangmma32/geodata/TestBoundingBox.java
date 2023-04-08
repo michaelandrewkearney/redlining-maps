@@ -3,7 +3,6 @@ package edu.brown.cs32.ezhangmma32.geodata;
 import edu.brown.cs32.ezhang29mkearne1.geoData.BoundingBox;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON;
 import edu.brown.cs32.ezhang29mkearne1.server.MultiLayerState;
-import edu.brown.cs32.ezhang29mkearne1.server.layer.search.CachedSearcher;
 import edu.brown.cs32.ezhang29mkearne1.server.layer.search.ExpensiveSearcher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
