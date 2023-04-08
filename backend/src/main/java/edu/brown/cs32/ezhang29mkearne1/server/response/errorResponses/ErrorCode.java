@@ -1,4 +1,4 @@
-package edu.brown.cs32.ezhang29mkearne1.server.errorResponses;
+package edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses;
 
 /**
  * An enum representing the type of error message that has occurred when the handler is not able to

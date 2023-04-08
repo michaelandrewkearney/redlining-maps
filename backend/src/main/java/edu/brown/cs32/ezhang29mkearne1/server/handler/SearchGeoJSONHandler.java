@@ -1,12 +1,12 @@
-package edu.brown.cs32.ezhang29mkearne1.server;
+package edu.brown.cs32.ezhang29mkearne1.server.handler;
 
 import edu.brown.cs32.ezhang29mkearne1.geoData.BoundingBox;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.FeatureCollection;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.Feature;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.BadJsonException;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.BadRequestException;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.ErrorResponse;
+import edu.brown.cs32.ezhang29mkearne1.server.ServerState;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.BadRequestException;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.ErrorResponse;
 import edu.brown.cs32.ezhang29mkearne1.server.layer.search.ExpensiveSearcher;
 import edu.brown.cs32.ezhang29mkearne1.server.layer.search.Searcher;
 import edu.brown.cs32.ezhang29mkearne1.server.response.ServerResponses;
@@ -33,7 +33,7 @@ public final class SearchGeoJSONHandler implements Route {
   public Object handle(Request request, Response response) throws Exception {
     String query = request.queryParams("query");
     if (query != null) {
-      FeatureCollection results = state.getSearcher().search((Feature f) -> {
+      FeatureCollection results = state.search(query, (Feature f) -> {
         f.props().containsKey("area_description_data");
         for (String s : ((Map<String, String>) f.props().get("area_description_data")).values()) {
           if (s.contains(query)) {

@@ -1,14 +1,12 @@
-package edu.brown.cs32.ezhang29mkearne1.server;
+package edu.brown.cs32.ezhang29mkearne1.server.handler;
 
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON;
 import edu.brown.cs32.ezhang29mkearne1.geoData.BoundingBox;
-import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.Feature;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.FeatureCollection;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.BadRequestException;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.DatasourceException;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.ErrorResponse;
-import edu.brown.cs32.ezhang29mkearne1.server.layer.search.ExpensiveSearcher;
-import edu.brown.cs32.ezhang29mkearne1.server.layer.search.Searcher;
+import edu.brown.cs32.ezhang29mkearne1.server.ServerState;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.BadRequestException;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.DatasourceException;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.ErrorResponse;
 import edu.brown.cs32.ezhang29mkearne1.server.response.ServerResponses;
 import spark.Request;
 import spark.Response;
@@ -16,10 +14,10 @@ import spark.Route;
 
 import java.util.Map;
 
-public final class FilterWithinBoundsHandler implements Route {
+public final class FilterGeoJSON implements Route {
   private final ServerState state;
 
-  public FilterWithinBoundsHandler(ServerState state) {
+  public FilterGeoJSON(ServerState state) {
     this.state = state;
   }
 

@@ -50,6 +50,7 @@ public class GeoJSON {
         @Override
         default Position[] toFlatList() {return (coordinates() == null) ? new Position[]{} : coordinates().toFlatList();}
         Geometry copy();
+        String type();
         static PolymorphicJsonAdapterFactory<Geometry> getFactory() {
             return PolymorphicJsonAdapterFactory.of(Geometry.class, "type")
                         .withSubtype(Point.class, "Point")
@@ -61,11 +62,12 @@ public class GeoJSON {
         }
     }
     public record Point (
+            @Json(name = "type") String type,
             @Json(name = "coordinates") Position coordinates)
             implements Geometry {
         @Override
         public Point copy() {
-            return new Point(coordinates.copy());
+            return new Point(type, coordinates.copy());
         }
     }
     public record Position (double lon, double lat, double alt) implements RawGeometry {
@@ -109,11 +111,12 @@ public class GeoJSON {
         }
     }
     public record MultiPoint (
+            @Json(name = "type") String type,
             @Json(name = "coordinates") RawMultiPoint coordinates)
             implements Geometry {
         @Override
         public MultiPoint copy() {
-            return new MultiPoint(coordinates().copy());
+            return new MultiPoint(type, coordinates().copy());
         }
         public record RawMultiPoint (Position[] list) implements RawGeometry {
             @Override
@@ -159,10 +162,11 @@ public class GeoJSON {
         }
     }
     public record LineString (
+            @Json(name = "type") String type,
             @Json(name = "coordinates") RawLineString coordinates)
             implements Geometry {
         public LineString copy() {
-            return new LineString(coordinates().copy());
+            return new LineString(type, coordinates().copy());
         }
         public record RawLineString (Position[] list) implements RawGeometry {
             @Override
@@ -208,10 +212,11 @@ public class GeoJSON {
         }
     }
     public record MultiLineString (
+            @Json(name = "type") String type,
             @Json(name = "coordinates") RawMultiLineString coordinates)
             implements Geometry {
         @Override
-        public MultiLineString copy() {return new MultiLineString(coordinates.copy());}
+        public MultiLineString copy() {return new MultiLineString(type, coordinates.copy());}
         public record RawMultiLineString (MultiPoint.RawMultiPoint[] list) implements RawGeometry {
             @Override
             public BoundingBox getBounds() {
@@ -261,11 +266,12 @@ public class GeoJSON {
 
     }
     public record Polygon (
+            @Json(name = "type") String type,
             @Json(name = "coordinates") MultiLineString.RawMultiLineString coordinates)
             implements Geometry {
         @Override
         public Polygon copy() {
-            return new Polygon(coordinates.copy());
+            return new Polygon(type, coordinates.copy());
         }
         public record RawPolygon (MultiPoint.RawMultiPoint[] list) implements RawGeometry {
             @Override
@@ -315,6 +321,7 @@ public class GeoJSON {
         }
     }
     public record MultiPolygon (
+            @Json(name = "type") String type,
             @Json(name = "coordinates") RawMultiPolygon coordinates)
             implements Geometry {
         public record RawMultiPolygon(Polygon.RawPolygon[] list) implements RawGeometry {
@@ -371,13 +378,20 @@ public class GeoJSON {
         }
 
         public MultiPolygon copy() {
-            return new MultiPolygon(coordinates().copy());
+            return new MultiPolygon(type, coordinates().copy());
         }
+    }
+    public interface FeatureLike {
+        String type();
+        Geometry geometry();
+        Map<String, Object> props();
+        FeatureLike copy();
     }
     public record Feature (
             @Json(name = "type") String type,
             @Json(name = "geometry") Geometry geometry,
-            @Json(name = "properties") Map<String, Object> props) {
+            @Json(name = "properties") Map<String, Object> props)
+    implements FeatureLike {
         public Feature copy() {
             return new Feature(
                     this.type,
@@ -394,15 +408,23 @@ public class GeoJSON {
                     .adapter(Feature.class);
         }
     }
-    public record FeatureCollection (
-            @Json(name = "type") String type,
-            @Json(name = "features") List<Feature> features)
-             implements Searcher.Filterable<Feature> {
-        public static JsonAdapter<FeatureCollection> getAdapter() {
+    public interface FeatureCollectionLike<E extends FeatureLike> extends Searcher.Filterable<E> {
+        String type();
+        List<E> features();
+        FeatureCollectionLike copy();
+        static JsonAdapter<FeatureCollection> getAdapter() {
             return RawGeometry.getBuilder()
                     .build()
                     .adapter(FeatureCollection.class);
         }
+        Searcher.Filterable<E> filter(Searcher.FilterFunction<E> function);
+
+    }
+    public record FeatureCollection (
+            @Json(name = "type") String type,
+            @Json(name = "features") List<Feature> features)
+             implements FeatureCollectionLike<Feature> {
+
         public FeatureCollection copy() {
             List<Feature> featuresCopy = this.features.stream()
                     .map(Feature::copy)
@@ -415,6 +437,9 @@ public class GeoJSON {
             List<Feature> results = new ArrayList<>();
             features.forEach((f) -> {if (function.run(f)) {results.add(f);}});
             return new FeatureCollection(this.type, results);
+        }
+        public long size() {
+            return features().size();
         }
     }
 }

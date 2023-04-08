@@ -22,9 +22,10 @@ public record BoundingBox(double minLon, double minLat, double maxLon, double ma
      */
     public BoundingBox {
         assert(isValidLon(minLon));
-        assert(isValidLon(maxLon));
         assert(isValidLat(minLat));
+        assert(isValidLon(maxLon));
         assert(isValidLat(maxLat));
+
         //A BoundingBox can wrap over the date lane, so don't check that minLon <= maxLon
         // todo test wrapping
 //        assert(wraps == (maxLon < minLon));

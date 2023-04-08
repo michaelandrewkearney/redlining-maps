@@ -1,6 +1,7 @@
-package edu.brown.cs32.ezhang29mkearne1.server;
+package edu.brown.cs32.ezhang29mkearne1.server.layer;
 
 import com.squareup.moshi.JsonAdapter;
+import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.Feature;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.FeatureCollection;
 import edu.brown.cs32.ezhang29mkearne1.server.layer.search.CachedSearcher;
@@ -28,7 +29,7 @@ public final class MapLayer {
             BufferedReader br = new BufferedReader(fr)) {
       this.filepath = filepath;
       JsonAdapter<FeatureCollection> geoJsonadapter =
-              FeatureCollection.getAdapter();
+              GeoJSON.FeatureCollectionLike.getAdapter();
       String geoJson = br.lines().collect(Collectors.joining());
       this.featureCollection = geoJsonadapter.fromJson(geoJson);
     } catch (IOException e) {

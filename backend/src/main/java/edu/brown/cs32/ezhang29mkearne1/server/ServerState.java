@@ -3,8 +3,8 @@ package edu.brown.cs32.ezhang29mkearne1.server;
 import com.squareup.moshi.JsonAdapter;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON;
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON.FeatureCollection;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.DatasourceException;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.IllegalFilepathException;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.DatasourceException;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.IllegalFilepathException;
 import edu.brown.cs32.ezhang29mkearne1.server.layer.search.CachedSearcher;
 import edu.brown.cs32.ezhang29mkearne1.server.layer.search.ExpensiveSearcher;
 import edu.brown.cs32.ezhang29mkearne1.server.layer.search.Searcher;
@@ -17,11 +17,29 @@ import java.util.stream.Collectors;
 
 public class ServerState {
   private FeatureCollection featureCollection;
-  private Searcher<FeatureCollection, GeoJSON.Feature> filterer;
-  private Searcher<FeatureCollection, GeoJSON.Feature> searcher;
+  private Searcher<GeoJSON.FeatureCollection, GeoJSON.Feature> filterer;
+  private Searcher<GeoJSON.FeatureCollection, GeoJSON.Feature> searcher;
 
  // TODO: protect file access
   private final String allowedDir;
+
+    public record StringFeatureFilterFunction(Searcher.FilterFunction<GeoJSON.Feature> function, String query) implements Searcher.FilterFunction<GeoJSON.Feature> {
+        @Override
+        public boolean run(GeoJSON.Feature filtered) {
+            return function.run(filtered);
+        }
+        @Override
+        public boolean equals(Object that) {
+            if (that.getClass() != this.getClass()) {
+                return false;
+            }
+            return ((StringFeatureFilterFunction) that).query().equals(query());
+        }
+        @Override
+        public int hashCode() {
+            return query.hashCode();
+        }
+    }
 
   public ServerState(String allowedDir) {
     this.featureCollection = null;
@@ -34,7 +52,7 @@ public class ServerState {
       throw new IllegalFilepathException("msg", Map.of());
     }
     try {
-      JsonAdapter<FeatureCollection> adapter = GeoJSON.FeatureCollection.getAdapter();
+      JsonAdapter<FeatureCollection> adapter = GeoJSON.FeatureCollectionLike.getAdapter();
       BufferedReader br = new BufferedReader(new FileReader(filepath));
       String geoJson = br.lines().collect(Collectors.joining());
       this.featureCollection = adapter.fromJson(geoJson);
@@ -58,17 +76,22 @@ public class ServerState {
     return this.featureCollection;
   }
 
-    public Searcher<FeatureCollection, GeoJSON.Feature> getFilterer() throws DatasourceException {
+    public Searcher<GeoJSON.FeatureCollection, GeoJSON.Feature> getFilterer() throws DatasourceException {
         if (this.filterer == null) {
             throw new DatasourceException("No filterer has been constructed.", Map.of());
         }
         return this.filterer;
     }
 
-    public Searcher<FeatureCollection, GeoJSON.Feature> getSearcher() throws DatasourceException {
+    public Searcher<GeoJSON.FeatureCollection, GeoJSON.Feature> getSearcher() throws DatasourceException {
         if (this.searcher == null) {
             throw new DatasourceException("No searcher has been constructed.", Map.of());
         }
         return this.searcher;
+    }
+
+    public FeatureCollection search(String query, Searcher.FilterFunction<GeoJSON.Feature> function) {
+        FeatureCollection results = searcher.search(new StringFeatureFilterFunction(function, query));
+        return results;
     }
 }

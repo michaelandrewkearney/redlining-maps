@@ -1,7 +1,7 @@
-package edu.brown.cs32.ezhang29mkearne1.server;
+package edu.brown.cs32.ezhang29mkearne1.server.handler;
 
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.BadJsonException;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.BadRequestException;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.BadJsonException;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.BadRequestException;
 
 import java.util.Collections;
 import java.util.HashMap;

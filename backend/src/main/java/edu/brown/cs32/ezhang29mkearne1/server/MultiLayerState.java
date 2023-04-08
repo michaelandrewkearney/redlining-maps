@@ -1,27 +1,21 @@
 package edu.brown.cs32.ezhang29mkearne1.server;
 
+import edu.brown.cs32.ezhang29mkearne1.server.layer.MapLayer;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class State {
+public class MultiLayerState {
     private static final String redliningLayer = "maplayers/redlining/usa.json";
     private static final String maplayersDir = "maplayers";
     private MapLayer redlining = null;
     private final Map<String, File> availableLayers;
     private final Map<String, MapLayer> loadedLayers;
 
-    public State() {
-        availableLayers = constructFileMap("", new File(State.class.getClassLoader().getResource(maplayersDir).getPath()));
+    public MultiLayerState() {
+        availableLayers = constructFileMap("", new File(MultiLayerState.class.getClassLoader().getResource(maplayersDir).getPath()));
         loadedLayers = new HashMap<>();
-    }
-
-    public void init() throws IOException {
-        if (loadLayer(redliningLayer)) {
-            redlining = getLoadedLayer(redliningLayer);
-            return;
-        }
-        throw new IOException();
     }
 
     public MapLayer getRedliningLayer() {

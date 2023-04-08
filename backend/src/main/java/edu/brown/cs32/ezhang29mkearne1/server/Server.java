@@ -1,11 +1,11 @@
 package edu.brown.cs32.ezhang29mkearne1.server;
 import static spark.Spark.after;
 
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.DatasourceException;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.IllegalFilepathException;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import edu.brown.cs32.ezhang29mkearne1.server.handler.FilterGeoJSON;
+import edu.brown.cs32.ezhang29mkearne1.server.handler.LoadGeoJsonHandler;
+import edu.brown.cs32.ezhang29mkearne1.server.handler.SearchGeoJSONHandler;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.DatasourceException;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.IllegalFilepathException;
 import spark.Spark;
 
 /**
@@ -14,6 +14,7 @@ import spark.Spark;
  */
 public final class Server {
   private final static String REDLINING_DATA_PATH = "src/main/resources/maplayers/redlining/usa.json";
+  private final static String PROVIDENCE_DATA_PATH = "src/main/resources/maplayers/redlining/providenceri.json";
 
   public static void main(String[] args)
       throws DatasourceException, IllegalFilepathException {
@@ -25,15 +26,18 @@ public final class Server {
             });
     start();
   }
-
   public static void start() throws DatasourceException, IllegalFilepathException {
+    start(REDLINING_DATA_PATH);
+  }
+
+  public static void start(String filepath) throws DatasourceException, IllegalFilepathException {
     System.out.println("Starting server...");
     System.out.println("Loading USA redlining data...");
     ServerState state = new ServerState("");
-    state.load(REDLINING_DATA_PATH);
+    state.load(filepath);
 
     Spark.get("/loadGeoJSON", new LoadGeoJsonHandler(state));
-    Spark.get("/filterGeoJSON", new FilterWithinBoundsHandler(state));
+    Spark.get("/filterGeoJSON", new FilterGeoJSON(state));
     Spark.get("/searchGeoJSON", new SearchGeoJSONHandler(state));
     Spark.init();
     Spark.awaitInitialization();

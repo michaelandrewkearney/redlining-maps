@@ -1,9 +1,8 @@
 package edu.brown.cs32.ezhangmma32.geodata;
 
 import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON;
-import edu.brown.cs32.ezhang29mkearne1.server.State;
+import edu.brown.cs32.ezhang29mkearne1.server.MultiLayerState;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -14,18 +13,14 @@ public class TestGeoJSON {
     private static GeoJSON.FeatureCollection fc;
     @BeforeAll
     public static void setupBeforeAll() {
-        State state = new State();
-        try {
-            state.init();
-            fc = state.getRedliningLayer().getFeatureCollection();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        MultiLayerState state = new MultiLayerState();
+        state.loadLayer("maplayers/redlining/test.json");
+        fc = state.getLoadedLayer("maplayers/redlining/test.json").getFeatureCollection();
     }
     @Test
-    public void holcGradeSet() {
+    public void testParsing() {
         Set<String> set = new HashSet<>();
-        for (GeoJSON.Feature f: fc.features()) {
+        for (GeoJSON.FeatureLike f: fc.features()) {
             set.add((String) f.props().get("holc_grade"));
         }
         System.out.println(set);

@@ -20,15 +20,15 @@
     color: var(--darker-green);
     font-size: 1em;
     margin-right: 5px;
-    background-color: rgb(var(--color));
-    color: rgb(var(--background-color));
+    background-color: white;
+    color: black;
 }
   
 .inputbox-wrapper > button {
     padding: 4px;
     flex-grow: 0;
     flex-shrink: 1;
-    background-color: rgb(var(--color));
+    background-color: white;
     
 }
 

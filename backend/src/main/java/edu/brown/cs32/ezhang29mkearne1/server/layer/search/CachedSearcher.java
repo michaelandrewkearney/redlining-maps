@@ -2,6 +2,7 @@ package edu.brown.cs32.ezhang29mkearne1.server.layer.search;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.CacheStats;
 import com.google.common.cache.LoadingCache;
 import edu.brown.cs32.ezhang29mkearne1.server.layer.search.Searcher.Filterable;
 
@@ -19,11 +20,12 @@ public class CachedSearcher<R extends Filterable<E>, E> implements Searcher<R, E
     public CachedSearcher(Searcher<R, E> searcher, int maximumSize, int expireAfterWriteInMins) {
         this.searcher = searcher;
         cache = CacheBuilder.newBuilder()
+                .recordStats()
                 .maximumSize(maximumSize)
                 .expireAfterWrite(Duration.ofMinutes(expireAfterWriteInMins))
                 .build(
                         new CacheLoader<>() {
-                            public R load(FilterFunction<E> function) throws Exception {
+                            public R load(FilterFunction<E> function) {
                                 return searcher.search(function);
                             }
                         });
@@ -36,10 +38,14 @@ public class CachedSearcher<R extends Filterable<E>, E> implements Searcher<R, E
     @Override
     public R search(FilterFunction<E> function) {
         try {
+            System.out.println(cache.stats());
             return cache.get(function);
         } catch (ExecutionException e) {
             e.printStackTrace();
             return null;
         }
+    }
+    public CacheStats getStats() {
+        return cache.stats();
     }
 }

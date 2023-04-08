@@ -1,12 +1,7 @@
-package edu.brown.cs32.ezhang29mkearne1.server.errorResponses;
+package edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses;
 
 ;
 import com.squareup.moshi.Moshi;
-import edu.brown.cs32.ezhang29mkearne1.Adapters;
-import edu.brown.cs32.ezhang29mkearne1.geoData.GeoJSON;
-import edu.brown.cs32.ezhang29mkearne1.server.response.ServerResponses;
-
-import java.util.Map;
 
 /**
  * @param

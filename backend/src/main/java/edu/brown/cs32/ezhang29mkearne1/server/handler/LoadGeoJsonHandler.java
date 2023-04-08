@@ -1,16 +1,14 @@
-package edu.brown.cs32.ezhang29mkearne1.server;
+package edu.brown.cs32.ezhang29mkearne1.server.handler;
 
 import edu.brown.cs32.ezhang29mkearne1.Adapters;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.BadRequestException;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.DatasourceException;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.ErrorResponse;
-import edu.brown.cs32.ezhang29mkearne1.server.errorResponses.ServerResponseException;
-import edu.brown.cs32.ezhang29mkearne1.server.response.ServerResponses.FeatureCollectionResponse;
+import edu.brown.cs32.ezhang29mkearne1.server.ServerState;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.BadRequestException;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.ErrorResponse;
+import edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses.ServerResponseException;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import java.io.File;
 import java.util.Map;
 
 public final class LoadGeoJsonHandler implements Route {
