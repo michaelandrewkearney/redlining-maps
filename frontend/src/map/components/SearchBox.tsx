@@ -60,6 +60,7 @@ export default function SearchBox(props: SearchBoxProps) {
       <input
         type="text"
         className="search-box"
+        placeholder="Search neighborhood descriptions..."
         ref={searchBoxRef}
         onChange={(e) => setTextbox(e.target.value)}
         onKeyUp={(e) => {

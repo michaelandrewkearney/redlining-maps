@@ -1,6 +1,6 @@
 .App {
   /* setup global style variables*/
-  --fonts: Fira Sans, Segoe UI, "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Droid Sans", sans-serif, -apple-system;
+  --fonts: "Proxima Nova", Proxima-Nova, "Fira Sans", Segoe UI, "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Droid Sans", sans-serif, -apple-system;
   --monospace: "Fira Code", "Apercu Mono", source-code-pro, Menlo, Monaco, Consolas, "Consola", "Courier New", monospace;
 
   /* variables initially set for light mode */
@@ -25,7 +25,8 @@
 
 /* Font styling */
 .App {
-  font-family: var(--fonts);
+  font-family: 'Proxima Nova', Proxima-Nova, 'Fira Sans', Segoe UI, "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Droid Sans", sans-serif, -apple-system;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   color: var(--color);
   background-color: var(--background-color);
 }
@@ -75,7 +76,7 @@ a:hover {
 
 .infobox hr {
   width: 100%;
-  margin: 5px;
+  margin: 10px 0px;
 }
 
 .infobox p {
@@ -105,4 +106,14 @@ a:hover {
 .App .search-wrapper input {
   padding: 5px;
   font-size: large;
+}
+
+.text-note {
+  font-size: 10pt;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+.output-box p {
+  margin: 5px auto;
 }

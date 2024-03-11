@@ -125,6 +125,10 @@ function App({ requestJson, dataPath }: AppProps) {
       );
       const f: GeoJSON.Feature = features[0];
       if (f && f.properties) {
+        let description: String | undefined = undefined;
+        if (f.properties.area_description_data) {
+          description = JSON.parse(f.properties.area_description_data)["5"];
+        }
         setSelectedHeader(
           (f.properties.holc_id
             ? "#" + f.properties.holc_id.toString()
@@ -137,13 +141,13 @@ function App({ requestJson, dataPath }: AppProps) {
             : "Unknown City"
         ),
           setSelectedContent([
-            "Name: " + (f.properties.name ? f.properties.name : "Unknown"),
+            "Neighborhood: " + (f.properties.name ? f.properties.name : "Unnamed"),
             "HOLC Grade: " +
               (f.properties.holc_grade ? f.properties.holc_grade : "Unknown"),
             "Description: " +
-              (f.properties.area_description_data
-                ? f.properties.area_description_data.toString()
-                : "Unknown"),
+              ((description != undefined)
+                ? description
+                : "None available")
           ]);
       } else {
         setSelectedHeader("");
@@ -235,18 +239,17 @@ function App({ requestJson, dataPath }: AppProps) {
         <div className="header-wrapper" aria-label="Redlining" tabIndex={2}>
           <Header />
         </div>
-        <hr />
         <div
           className="input-wrapper"
           role="Search"
-          aria-label="Search neighborhoods by description"
+          aria-label="Search neighborhood descriptions"
         >
-          <div aria-hidden>Search neighborhoods by description.</div>
           <SearchBox
             disabled={disabled}
             handleSearch={handleSearch}
             handleSearchClear={handleSearchClear}
           />
+          <div aria-hidden className="text-note">Cmd+Shft+S to focus. Cmd+Del to clear.</div>
         </div>
         <hr />
         <div className="output-wrapper">

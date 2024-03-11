@@ -16,7 +16,6 @@
     flex-grow: 1;
     flex-shrink: 0;
     min-width: 0;
-    font-family: var(--monospace);
     color: var(--darker-green);
     font-size: 1em;
     margin-right: 5px;

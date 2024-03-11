@@ -1,6 +1,5 @@
 package edu.brown.cs32.ezhang29mkearne1.server.response.errorResponses;
 
-;
 import com.squareup.moshi.Moshi;
 
 /**

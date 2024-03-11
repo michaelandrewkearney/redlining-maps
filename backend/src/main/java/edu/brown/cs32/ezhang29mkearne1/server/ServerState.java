@@ -48,18 +48,16 @@ public class ServerState {
 
   public void load(String filepath)
       throws IllegalFilepathException, DatasourceException {
-    if (false) {
-      throw new IllegalFilepathException("msg", Map.of());
-    }
     try {
       JsonAdapter<FeatureCollection> adapter = GeoJSON.FeatureCollectionLike.getAdapter();
-      BufferedReader br = new BufferedReader(new FileReader(filepath));
+      BufferedReader br = new BufferedReader(new FileReader(getClass().getClassLoader().getResource(filepath).getPath()));
       String geoJson = br.lines().collect(Collectors.joining());
+      br.close();
       this.featureCollection = adapter.fromJson(geoJson);
       filterer = new ExpensiveSearcher<>(this.featureCollection);
       searcher = new CachedSearcher<>(new ExpensiveSearcher<>(this.featureCollection));
     } catch (IOException e) {
-      throw new DatasourceException("msg", Map.of());
+      throw new DatasourceException("Unable to open " + filepath, Map.of());
     }
   }
 
